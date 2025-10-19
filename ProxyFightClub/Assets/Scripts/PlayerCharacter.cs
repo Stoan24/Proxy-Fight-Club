@@ -4,22 +4,21 @@ using UnityEngine.InputSystem;
 public class PlayerCharacter : BasicCharacter
 {
     [SerializeField] private InputActionAsset _inputAsset;
-    [SerializeField] private InputActionReference _movementAction;
 
-    private InputAction _jumpAction;
-    private InputAction _handAction;
+    [SerializeField] private InputActionReference _rightHandAction;
+    [SerializeField] private InputActionReference _leftHandAction;
+    
+    [SerializeField] private InputActionReference _movementAction;
+    [SerializeField] private InputActionReference _jumpAction;
+
+    [SerializeField] private Transform _cameraTransform;
 
     protected override void Awake()
     {
         base.Awake();
         if (_inputAsset == null) return;
 
-        //example of searching for the bindings in code
-        _jumpAction = _inputAsset.FindActionMap("Movement").FindAction("Jump");
-        _handAction = _inputAsset.FindActionMap("Hands").FindAction("Left");
-
-        //we bind a callback to it instead of continiously monitoring input
-        _jumpAction.performed += HandleJumpInput;
+        _jumpAction.ToInputAction().performed += HandleJumpInput;
     }
 
     private void OnEnable()
@@ -48,6 +47,7 @@ public class PlayerCharacter : BasicCharacter
         Vector2 movementInput = _movementAction.action.ReadValue<Vector2>();
         
         Vector3 movement = new Vector3(movementInput.x, 0 , movementInput.y);
+
         _movementBehaviour.DesiredMovementDirection = movement;
     }
 
@@ -59,13 +59,19 @@ public class PlayerCharacter : BasicCharacter
     }
     private void HandleAttackInput()
     {
-        if (_attackBehaviour == null || _handAction == null) return;
+        if (_attackBehaviour == null || _rightHandAction == null || _leftHandAction == null) return;
 
-        
-        if (_handAction.WasPressedThisFrame()) _attackBehaviour.Attack();
+        if (_rightHandAction.ToInputAction().WasPerformedThisFrame())
+        {
+            _attackBehaviour.Attack(false);
+        }
+        else if (_leftHandAction.ToInputAction().WasPerformedThisFrame())
+        {
+            _attackBehaviour.Attack(true);
+        }
     }
     protected void OnDestroy()
     {
-        _jumpAction.performed -= HandleJumpInput;
+        _jumpAction.ToInputAction().performed -= HandleJumpInput;
     }
 }

@@ -4,54 +4,61 @@ using UnityEngine;
 
 public class MovementBehaviour : MonoBehaviour
 {
-    [SerializeField]
-    private float _movementSpeed = 1.0f;
+    [SerializeField] protected float _movementSpeed = 1.0f;
 
-    [SerializeField]
-    private float _jumpPower = 10.0f;
+    [SerializeField] protected float _jumpPower = 10.0f;
 
-    [SerializeField]
-    private Transform _cameraTransform;
+    [SerializeField] protected Transform _cameraTransform;
 
-    private Rigidbody _rigidBody;
+    protected Rigidbody _rigidBody;
 
-    private Vector3 _desiredMovementDirection = Vector3.zero;
+    protected Vector3 _desiredMovementDirection = Vector3.zero;
+    protected GameObject _target = null;
 
-    private bool _isGrounded = false;
+    protected bool _isGrounded = false;
 
-    private const float GROUND_CHECK_DISTANCE = 0.2f;
-    private const string GROUND_LAYER = "Ground";
+    protected const float GROUND_CHECK_DISTANCE = 0.2f;
+    protected const string GROUND_LAYER = "Ground";
 
     public Vector3 DesiredMovementDirection
     {
-        get { return _desiredMovementDirection; }
-        set { _desiredMovementDirection = value; }
+        get => _desiredMovementDirection;
+        set => _desiredMovementDirection = value;
+    }
+    public GameObject Target
+    {
+        get => _target;
+        set => _target = value;
     }
 
-    private void Awake()
+    protected virtual void Awake()
     {
         _rigidBody = GetComponent<Rigidbody>();
     }
 
-    private void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
         HandleMovement();
 
         //check if ground is under player
         _isGrounded = Physics.Raycast(transform.position + Vector3.up * 0.1f, Vector3.down, GROUND_CHECK_DISTANCE, LayerMask.GetMask(GROUND_LAYER));
     }
-    private void HandleMovement()
+    protected virtual void HandleMovement()
     {
         if (_rigidBody == null) return;
 
-        Vector3 movement = _cameraTransform.forward * _desiredMovementDirection.z +
-                           _cameraTransform.right * _desiredMovementDirection.x;
+        _rigidBody.rotation = Quaternion.Euler(_cameraTransform.eulerAngles);
+
+        Vector3 movement = transform.forward * _desiredMovementDirection.z +
+                           transform.right * _desiredMovementDirection.x;
+
         movement.y = 0f;
 
         movement *= _movementSpeed;
         
         //remove gravity, keep y velocity
         movement.y = _rigidBody.linearVelocity.y;
+
 
         _rigidBody.linearVelocity = movement;
     }
