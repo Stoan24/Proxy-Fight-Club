@@ -1,3 +1,4 @@
+using UnityEditor.ShaderKeywordFilter;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,6 +11,8 @@ public class PlayerCharacter : BasicCharacter
     
     [SerializeField] private InputActionReference _movementAction;
     [SerializeField] private InputActionReference _jumpAction;
+
+    [SerializeField] private InputActionReference _interaction;
 
     [SerializeField] private Transform _cameraTransform;
 
@@ -37,6 +40,18 @@ public class PlayerCharacter : BasicCharacter
     {
         HandleMovementInput();
         HandleAttackInput();
+        HandleInteraction();
+    }
+
+    private void HandleInteraction()
+    {
+        //_hasEnemy = _interactBehaviour.CheckIfInRange(_cameraTransform.position);
+
+
+        if (_interaction.ToInputAction().WasPerformedThisFrame())
+        {
+            
+        }
     }
 
     void HandleMovementInput()

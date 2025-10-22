@@ -10,15 +10,16 @@ public class MovementBehaviour : MonoBehaviour
 
     [SerializeField] protected Transform _cameraTransform;
 
-    protected Rigidbody _rigidBody;
+    private Rigidbody _rigidBody;
 
-    protected Vector3 _desiredMovementDirection = Vector3.zero;
-    protected GameObject _target = null;
+    private Vector3 _desiredMovementDirection = Vector3.zero;
+    
+    protected GameObject _target;
 
-    protected bool _isGrounded = false;
+    private bool _isGrounded = false;
 
-    protected const float GROUND_CHECK_DISTANCE = 0.2f;
-    protected const string GROUND_LAYER = "Ground";
+    private const float GROUND_CHECK_DISTANCE = 0.2f;
+    private const string GROUND_LAYER = "Ground";
 
     public Vector3 DesiredMovementDirection
     {
@@ -49,8 +50,7 @@ public class MovementBehaviour : MonoBehaviour
 
         _rigidBody.rotation = Quaternion.Euler(_cameraTransform.eulerAngles);
 
-        Vector3 movement = transform.forward * _desiredMovementDirection.z +
-                           transform.right * _desiredMovementDirection.x;
+        Vector3 movement = transform.forward * _desiredMovementDirection.z + transform.right * _desiredMovementDirection.x;
 
         movement.y = 0f;
 

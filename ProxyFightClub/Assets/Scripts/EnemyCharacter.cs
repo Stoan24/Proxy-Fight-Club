@@ -1,12 +1,21 @@
 using System;
+using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class EnemyCharacter : BasicCharacter
 {
-    private GameObject _playerTarget = null;
+    private GameObject _playerTarget;
 
     [SerializeField] private float _attackRange = 2.0f;
+
+    [SerializeField] private Material _material;
+
+    public bool _isLookedAt
+    {
+        get => _isLookedAt;
+        set => _isLookedAt = value;
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Start()
@@ -17,6 +26,8 @@ public class EnemyCharacter : BasicCharacter
         {
             _playerTarget = player.gameObject;
         }
+
+        //gameObject.SetActive(false);
     }
 
     // Update is called once per frame
@@ -24,6 +35,15 @@ public class EnemyCharacter : BasicCharacter
     {
         HandleMomevement();
         HandleAttack();
+        if (_isLookedAt)
+        {
+            ChangeColor();
+        }
+    }
+
+    private void ChangeColor()
+    {
+        
     }
 
     void HandleMomevement()
