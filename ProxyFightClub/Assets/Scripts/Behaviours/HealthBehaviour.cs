@@ -31,6 +31,13 @@ public class HealthBehaviour : MonoBehaviour
     {
         _currentHealth = _maxHealth;
     }
+
+    public void IncreaseMaxHealth(int amount)
+    {
+        _maxHealth += amount;
+        _currentHealth = _maxHealth;
+    }
+
     private void Die()
     {
         Destroy(gameObject);

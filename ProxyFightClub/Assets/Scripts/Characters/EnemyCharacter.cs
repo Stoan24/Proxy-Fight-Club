@@ -19,6 +19,13 @@ public class EnemyCharacter : BasicCharacter
 
     private NavMeshMovementBehaviour _navMesh;
 
+    [SerializeField] private int _rewardPoints = 3;
+    public int RewardPoint
+    {
+        get => _rewardPoints;
+        set => _rewardPoints = value;
+    }
+
     protected override void Awake()
     {
         base.Awake();

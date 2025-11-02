@@ -1,6 +1,7 @@
 using UnityEditor.ShaderKeywordFilter;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.PlayerLoop;
 
 public class PlayerCharacter : BasicCharacter
 {
@@ -14,8 +15,11 @@ public class PlayerCharacter : BasicCharacter
 
     [SerializeField] private InputActionReference _interaction;
     [SerializeField] private float _interactDistance = 5f;
+
     private EnemyCharacter _currentEnemy;
     private const string ENEMY_LAYER = "Enemy";
+
+    private UpgradeStation _currentStation;
 
     [SerializeField] private Transform _cameraTransform;
 
@@ -51,35 +55,43 @@ public class PlayerCharacter : BasicCharacter
         if (_interaction == null || _cameraTransform == null) return;
 
         //rayCast forward from camera
-        if (!Physics.Raycast(_cameraTransform.position, _cameraTransform.forward, out var hitInfo, _interactDistance, LayerMask.GetMask(ENEMY_LAYER)))
+        if (!Physics.Raycast(_cameraTransform.position, _cameraTransform.forward, out var hitInfo, _interactDistance))
         {
             RemoveEnemy();
             return;
         }
+
+        // -- ENEMY --
 
         var enemy = hitInfo.transform.GetComponentInParent<EnemyCharacter>();
-        if (enemy == null)
+        if (enemy != null)
         {
-            RemoveEnemy();
-            return;
+            if (_currentEnemy != enemy)
+            {
+                RemoveEnemy();
+            }
+
+            _currentEnemy = enemy;
+            _currentEnemy.SetHighlight(true);
+
+            //interaction
+            if (_interaction.ToInputAction().WasPerformedThisFrame())
+            {
+                if (GameStateManager.Instance != null)
+                {
+                    GameStateManager.Instance.StartFight(enemy);
+                }
+            }
         }
 
-        //highlighting
-        if (_currentEnemy != null && _currentEnemy != enemy)
-        {
-            _currentEnemy.SetHighlight(false);
-        }
+        // -- UPGRADE STATION --
+        if (!hitInfo.transform.TryGetComponent<UpgradeStation>(out var station)) return;
 
-        _currentEnemy = enemy;
-        _currentEnemy.SetHighlight(true);
+        _currentStation = station;
 
-        //interaction
         if (_interaction.ToInputAction().WasPerformedThisFrame())
         {
-            if (GameStateManager.Instance != null)
-            {
-                GameStateManager.Instance.StartFight(enemy);
-            }
+            _currentStation.OpenMenu();
         }
     }
 
