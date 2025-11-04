@@ -1,4 +1,4 @@
-using UnityEditor.ShaderKeywordFilter;
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.PlayerLoop;
@@ -11,24 +11,52 @@ public class PlayerCharacter : BasicCharacter
     [SerializeField] private InputActionReference _leftHandAction;
     
     [SerializeField] private InputActionReference _movementAction;
-    [SerializeField] private InputActionReference _jumpAction;
+    [SerializeField] private InputActionReference _dodgeAction;
 
     [SerializeField] private InputActionReference _interaction;
+    [SerializeField] private InputActionReference _escape;
     [SerializeField] private float _interactDistance = 5f;
 
     private EnemyCharacter _currentEnemy;
     private const string ENEMY_LAYER = "Enemy";
 
     private UpgradeStation _currentStation;
+    private PlayerStats _stats;
 
     [SerializeField] private Transform _cameraTransform;
 
     protected override void Awake()
     {
         base.Awake();
+        _stats = GetComponent<PlayerStats>();
         if (_inputAsset == null) return;
 
-        _jumpAction.ToInputAction().performed += HandleJumpInput;
+        _dodgeAction.ToInputAction().performed += HandleDodgeInput;
+    }
+
+    private void Start()
+    {
+        ApplyStats();
+
+        if (_stats != null)
+        {
+            _stats.OnStatsChanged += ApplyStats;
+        }
+    }
+
+    private void ApplyStats()
+    {
+        if (_stats == null) return;
+
+        if (_healthBehaviour != null)
+        {
+            _attackBehaviour.SetDamage(_stats.Strength);
+        }
+
+        if (_movementBehaviour != null)
+        {
+            _movementBehaviour.SetSpeed(_stats.Speed);
+        }
     }
 
     private void OnEnable()
@@ -45,6 +73,17 @@ public class PlayerCharacter : BasicCharacter
 
     private void Update()
     {
+        if (_escape.ToInputAction().WasPerformedThisFrame())
+        {
+            if (_currentStation != null)
+            {
+                _currentStation.OpenMenu();
+                _currentStation = null;
+            }
+        }
+
+        if (GameStateManager.Instance != null && GameStateManager.Instance.IsInMenu) return;
+
         HandleMovementInput();
         HandleAttackInput();
         HandleInteraction();
@@ -53,6 +92,7 @@ public class PlayerCharacter : BasicCharacter
     private void HandleInteraction()
     {
         if (_interaction == null || _cameraTransform == null) return;
+
 
         //rayCast forward from camera
         if (!Physics.Raycast(_cameraTransform.position, _cameraTransform.forward, out var hitInfo, _interactDistance))
@@ -75,23 +115,23 @@ public class PlayerCharacter : BasicCharacter
             _currentEnemy.SetHighlight(true);
 
             //interaction
-            if (_interaction.ToInputAction().WasPerformedThisFrame())
+            if (_interaction.ToInputAction().WasPerformedThisFrame() && GameStateManager.Instance != null)
             {
-                if (GameStateManager.Instance != null)
-                {
-                    GameStateManager.Instance.StartFight(enemy);
-                }
+                GameStateManager.Instance.StartFight(enemy);
             }
+
+            return;
         }
+        RemoveEnemy();
 
         // -- UPGRADE STATION --
-        if (!hitInfo.transform.TryGetComponent<UpgradeStation>(out var station)) return;
-
-        _currentStation = station;
-
-        if (_interaction.ToInputAction().WasPerformedThisFrame())
+        if (hitInfo.transform.TryGetComponent<UpgradeStation>(out var station))
         {
-            _currentStation.OpenMenu();
+            if (_interaction.ToInputAction().WasPerformedThisFrame())
+            {
+                _currentStation = station;
+                _currentStation.OpenMenu();
+            }
         }
     }
 
@@ -116,11 +156,13 @@ public class PlayerCharacter : BasicCharacter
         _movementBehaviour.DesiredMovementDirection = movement;
     }
 
-    private void HandleJumpInput(InputAction.CallbackContext context)
+    private void HandleDodgeInput(InputAction.CallbackContext context)
     {
         if (_movementBehaviour == null) return;
 
-        _movementBehaviour.Jump();
+        Vector2 moveInput = _movementAction.action.ReadValue<Vector2>();
+
+        _movementBehaviour.Dodge(moveInput);
     }
 
     private void HandleAttackInput()
@@ -139,6 +181,10 @@ public class PlayerCharacter : BasicCharacter
 
     protected void OnDestroy()
     {
-        _jumpAction.ToInputAction().performed -= HandleJumpInput;
+        if (_stats != null)
+        {
+            _stats.OnStatsChanged -= ApplyStats;
+        }
+        _dodgeAction.ToInputAction().performed -= HandleDodgeInput;
     }
 }

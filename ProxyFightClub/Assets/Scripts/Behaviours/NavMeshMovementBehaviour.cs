@@ -6,15 +6,15 @@ public class NavMeshMovementBehaviour : MovementBehaviour
 {
     private NavMeshAgent _navMeshAgent;
 
+    private Vector3 _previousTargetPosition;
+
+    [SerializeField] private float _maxDistanceFromPlayer = 2.0f;
+
     public GameObject Target
     {
         get => _target;
         set => _target = value;
     }
-
-    private Vector3 _previousTargetPosition;
-
-    [SerializeField] private float _maxDistanceFromPlayer = 2.0f;
 
     protected override void Awake()
     {
@@ -22,13 +22,11 @@ public class NavMeshMovementBehaviour : MovementBehaviour
 
         _navMeshAgent = GetComponent<NavMeshAgent>();
         _navMeshAgent.speed = _movementSpeed;
-
-        _previousTargetPosition = transform.position;
     }
 
     protected override void HandleMovement()
     {
-        if (_target == null)
+        if (_target == null || _navMeshAgent.isActiveAndEnabled)
         {
             _navMeshAgent.isStopped = true;
             return;

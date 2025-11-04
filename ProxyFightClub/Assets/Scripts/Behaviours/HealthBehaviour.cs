@@ -20,11 +20,13 @@ public class HealthBehaviour : MonoBehaviour
     public void TakeDamage(int damage)
     {
         _currentHealth -= damage;
+        _currentHealth = Mathf.Max(0, _currentHealth);
+
+        //OnHealthChanged?.Invoke(_currentHealth, _maxHealth);
 
         if (_currentHealth > 0f) return;
 
         OnDeath?.Invoke();
-
         Die();
     }
     public void HealFull()
@@ -35,7 +37,7 @@ public class HealthBehaviour : MonoBehaviour
     public void IncreaseMaxHealth(int amount)
     {
         _maxHealth += amount;
-        _currentHealth = _maxHealth;
+        HealFull();
     }
 
     private void Die()

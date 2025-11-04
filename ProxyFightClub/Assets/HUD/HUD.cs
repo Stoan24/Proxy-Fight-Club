@@ -14,6 +14,20 @@ public class HUD : MonoBehaviour
     {
         var player = FindFirstObjectByType<PlayerCharacter>();
         _playerHealth = player?.GetComponent<HealthBehaviour>();
+
+        if (_playerHealth != null)
+        {
+            SetHealth(_playerHealth.currentHealth, _playerHealth.maxHealth);
+        }
+        else
+        {
+            SetHealth(0, 100);
+        }
+    }
+
+    public void UpgradedHealth(int current, int max)
+    {
+        SetHealth(current, max);
     }
 
     private void Update()

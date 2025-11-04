@@ -5,9 +5,13 @@ public class GameStateManager : MonoBehaviour
     public static GameStateManager Instance;
 
     public bool IsFightActive { get; private set; }
+    public bool IsInMenu { get; private set; }
 
     private PlayerCharacter _player;
-    private EnemyCharacter _currentEnemy;
+
+    private EnemyHealthBar _enemyHealthBar;
+
+    public EnemyCharacter CurrentEnemy { get; private set; }
 
     private void Awake()
     {
@@ -21,22 +25,39 @@ public class GameStateManager : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        _enemyHealthBar = FindAnyObjectByType<EnemyHealthBar>();
+
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+
+    public void MenuLock(bool inMenu)
+    {
+        IsInMenu = inMenu;
+    }
+
     public void StartFight(EnemyCharacter enemy)
     {
-        if (IsFightActive) return;
+        if (IsFightActive || IsInMenu) return;
 
         _player = FindFirstObjectByType<PlayerCharacter>();
-        _currentEnemy = enemy;
+        CurrentEnemy = enemy;
         IsFightActive = true;
 
         //reset health
         _player.GetComponent<HealthBehaviour>().HealFull();
-        _currentEnemy.GetComponent<HealthBehaviour>().HealFull();
+        CurrentEnemy.GetComponent<HealthBehaviour>().HealFull();
 
         //add deaths
         _player.GetComponent<HealthBehaviour>().OnDeath += OnPlayerDeath;
-        _currentEnemy.GetComponent<HealthBehaviour>().OnDeath += OnEnemyDeath;
+        CurrentEnemy.GetComponent<HealthBehaviour>().OnDeath += OnEnemyDeath;
 
+        if (_enemyHealthBar != null)
+        {
+            _enemyHealthBar.ShowBar(enemy);
+        }
     }
 
     private void OnPlayerDeath()
@@ -51,9 +72,21 @@ public class GameStateManager : MonoBehaviour
 
     private void EndFight(bool playerWin)
     {
+        if (_player == null || CurrentEnemy == null) return;
+        
         //remove deaths
-        _player.GetComponent<HealthBehaviour>().OnDeath -= OnPlayerDeath;
-        _currentEnemy.GetComponent<HealthBehaviour>().OnDeath -= OnEnemyDeath;
+        var playerHealth = _player.GetComponent<HealthBehaviour>();
+        if (playerHealth != null)
+        {
+            playerHealth.OnDeath -= OnPlayerDeath;
+            playerHealth.HealFull();
+        }
+
+        var enemyHealth = _player.GetComponent<HealthBehaviour>();
+        if (enemyHealth != null)
+        {
+            enemyHealth.OnDeath -= OnEnemyDeath;
+        }
 
         //give statPoints as reward of a win
         if (playerWin && _player != null)
@@ -61,12 +94,17 @@ public class GameStateManager : MonoBehaviour
             var stats = _player.GetComponent<PlayerStats>();
             if (stats != null)
             {
-                var reward = _currentEnemy.RewardPoint;
+                var reward = CurrentEnemy.RewardPoint;
                 stats.AddStatPoints(reward);
             }
         }
 
+        if (_enemyHealthBar != null)
+        {
+            _enemyHealthBar.HideBar();
+        }
+
         IsFightActive = false;
-        _currentEnemy = null;
+        CurrentEnemy = null;
     }
 }

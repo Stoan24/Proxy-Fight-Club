@@ -6,6 +6,8 @@ using UnityEngine;
 [System.Serializable]
 public class PlayerStats : MonoBehaviour
 {
+    private HUD _hud;
+
     public enum PlayerStatType
     {
         Health,
@@ -49,6 +51,11 @@ public class PlayerStats : MonoBehaviour
         set => _statpoints = value;
     }
 
+    private void Awake()
+    {
+        _hud = FindAnyObjectByType<HUD>();
+    }
+
     public void AddStatPoints(int amount)
     {
         _statpoints += amount;
@@ -59,11 +66,12 @@ public class PlayerStats : MonoBehaviour
     {
         if (_statpoints <= 0) return false;
 
-
         switch (stat)
         {
             case PlayerStatType.Health:
                 _maxHealth += _healthIncrease;
+
+                _hud.UpgradedHealth(_maxHealth, _maxHealth);
                 break;
             case PlayerStatType.Strength:
                 _strength += _strengthIncrease;

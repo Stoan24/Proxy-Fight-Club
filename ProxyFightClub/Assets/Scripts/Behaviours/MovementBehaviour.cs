@@ -4,19 +4,23 @@ using UnityEngine;
 
 public class MovementBehaviour : MonoBehaviour
 {
-    [SerializeField] protected float _movementSpeed = 1.0f;
-
-    [SerializeField] protected float _jumpPower = 10.0f;
-
+    [Header("Movement Settings")]
+    [SerializeField] protected float _movementSpeed = 5.0f;
     [SerializeField] protected Transform _cameraTransform;
+
+    [Header("Dodge Settings")]
+    [SerializeField] protected float _dodgePower = 10f;
+    [SerializeField] private float _dodgeCooldown = 1f;
+    [SerializeField] private float _dodgeDuration = 0.2f;
+    private float _dodgeTimer;
+    private bool _isDodging = false;
+
 
     private Rigidbody _rigidBody;
 
     private Vector3 _desiredMovementDirection = Vector3.zero;
     
     protected GameObject _target;
-
-    private bool _isGrounded = false;
 
     private const float GROUND_CHECK_DISTANCE = 0.2f;
     private const string GROUND_LAYER = "Ground";
@@ -25,6 +29,12 @@ public class MovementBehaviour : MonoBehaviour
     {
         get => _desiredMovementDirection;
         set => _desiredMovementDirection = value;
+    }
+
+    public bool IsDodging
+    {
+        get => _isDodging;
+        set => _isDodging = value;
     }
 
     protected virtual void Awake()
@@ -36,21 +46,22 @@ public class MovementBehaviour : MonoBehaviour
     {
         HandleMovement();
 
-        //check if ground is under player
-        _isGrounded = Physics.Raycast(transform.position + Vector3.up * 0.1f, Vector3.down, GROUND_CHECK_DISTANCE, LayerMask.GetMask(GROUND_LAYER));
+        if (_dodgeTimer > 0f)
+        {
+            _dodgeTimer -= Time.deltaTime;
+        }
     }
     protected virtual void HandleMovement()
     {
-        if (_rigidBody == null) return;
+        if (_rigidBody == null || IsDodging) return;
 
         Vector3 cameraForward = _cameraTransform.forward;
         cameraForward.y = 0;
+
         _rigidBody.rotation = Quaternion.Euler(0, Quaternion.LookRotation(cameraForward).eulerAngles.y, 0);
 
         var movement = transform.forward * _desiredMovementDirection.z + transform.right * _desiredMovementDirection.x;
-
         movement.y = 0f;
-
         movement *= _movementSpeed;
         
         //remove gravity, keep y velocity
@@ -58,11 +69,37 @@ public class MovementBehaviour : MonoBehaviour
 
         _rigidBody.linearVelocity = movement;
     }
-    public void Jump()
+    public void Dodge(Vector2 moveInput)
     {
-        if (_isGrounded)
+        if (_isDodging || _dodgeTimer > 0f) return;
+
+        _dodgeTimer = _dodgeCooldown;
+        _isDodging = true;
+
+        //get diraction based of movement
+        Vector3 dodgeDirection = new Vector3(moveInput.x, 0.5f, moveInput.y);
+
+        if (dodgeDirection.sqrMagnitude < 0.01f)
         {
-            _rigidBody.AddForce(Vector3.up * _jumpPower, ForceMode.Impulse);
+            dodgeDirection = Vector3.forward;
         }
+
+        Vector3 worldDirection = (_cameraTransform.forward.normalized * dodgeDirection.z + _cameraTransform.right.normalized * dodgeDirection.x).normalized;
+
+
+        _rigidBody.linearVelocity = Vector3.zero;
+        _rigidBody.AddForce(worldDirection * _dodgePower, ForceMode.Impulse);
+        
+        Invoke(nameof(EndDodge), _dodgeDuration);
+    }
+
+    private void EndDodge()
+    {
+        _isDodging = false;
+    }
+
+    public void SetSpeed(float speed)
+    {
+        _movementSpeed = speed;
     }
 }

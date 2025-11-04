@@ -1,6 +1,7 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
 
@@ -40,12 +41,14 @@ public class EnemyCharacter : BasicCharacter
                 renderer.material = _defaultMaterial;
             }
         }
+
+        _attackTimer = _attackCooldown;
     }
     private void Start()
     {
         var player = FindFirstObjectByType<PlayerCharacter>();
-
         if (player == null) return;
+
         _playerTarget = player.gameObject;
 
         _navMesh = GetComponent<NavMeshMovementBehaviour>();
@@ -54,7 +57,7 @@ public class EnemyCharacter : BasicCharacter
     // Update is called once per frame
     private void Update()
     {
-        if (GameStateManager.Instance == null || !GameStateManager.Instance.IsFightActive) return;
+        if (GameStateManager.Instance == null || !GameStateManager.Instance.IsFightActive || GameStateManager.Instance.CurrentEnemy != this) return;
 
         HandleMovement();
         HandleAttack();
@@ -62,6 +65,8 @@ public class EnemyCharacter : BasicCharacter
 
     private void HandleMovement()
     {
+        if (_navMesh == null || _playerTarget == null) return;
+
         if (_movementBehaviour == null) return;
 
         _navMesh.Target = _playerTarget;
@@ -84,20 +89,17 @@ public class EnemyCharacter : BasicCharacter
         //check distance from player
         var sqrDistance = (transform.position - _playerTarget.transform.position).sqrMagnitude;
 
-        if (sqrDistance > (_attackRange * _attackRange)) return;
-
-
         //use a timer between attacks
         _attackTimer -= Time.deltaTime;
 
-        if (_attackTimer > 0f) return;
+        if (sqrDistance <= (_attackRange * _attackRange) && _attackTimer <= 0f)
+        {
+            bool isLeft = (Random.Range(0, 2) == 0);
+            _attackBehaviour.Attack(isLeft);
 
-        bool isLeft = (Random.Range(0, 2) == 0);
-
-        _attackBehaviour.Attack(isLeft);
-
-        //Reset and use a random interval
-        _attackTimer = Random.Range(1.0f, 2.5f);
+            //Reset and use a random interval
+            _attackTimer = Random.Range(_attackCooldown * 0.8f, _attackCooldown * 1.2f);
+        }
     }
 
     public void SetHighlight(bool isHighlighted)
