@@ -84,7 +84,8 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 550ec4ff7df30654fbc8c528770195bd, type: 2}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 7719881042185614705, guid: 7a3004f99b48aac4a8470db5b0bec486, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
@@ -127,6 +128,8 @@ MonoBehaviour:
   _attackCooldown: 0
   _defaultMaterial: {fileID: 2100000, guid: 550ec4ff7df30654fbc8c528770195bd, type: 2}
   _highlinghtMaterial: {fileID: 2100000, guid: 58c0ab0cbf077d345b70923fddcda5ba, type: 2}
+  _rewardPoints: 3
+  _isBoss: 0
 --- !u!114 &2707166746892514921
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -141,6 +144,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _leftArmAnimator: {fileID: 8145388132650909143}
   _rightArmAnimator: {fileID: 5871036515169989209}
+  _baseDamage: 10
 --- !u!195 &631288711941956424
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -176,8 +180,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _movementSpeed: 1
-  _jumpPower: 10
   _cameraTransform: {fileID: 0}
+  _dodgePower: 10
+  _dodgeCooldown: 1
+  _dodgeDuration: 0.2
   _maxDistanceFromPlayer: 2
 --- !u!95 &8145388132650909143 stripped
 Animator:

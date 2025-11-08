@@ -22,8 +22,6 @@ public class HealthBehaviour : MonoBehaviour
         _currentHealth -= damage;
         _currentHealth = Mathf.Max(0, _currentHealth);
 
-        CameraShake.Instance?.Shake();
-
         if (_currentHealth > 0f) return;
 
         OnDeath?.Invoke();

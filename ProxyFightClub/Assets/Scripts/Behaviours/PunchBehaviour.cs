@@ -4,6 +4,11 @@ using UnityEngine;
 public class PunchBehaviour : MonoBehaviour
 {
     [SerializeField] private int _damage = 10;
+
+    [Header("Sound")]
+    [SerializeField] private AudioClip _punchSound;
+    [SerializeField] private AudioSource _audioSource;
+
     private bool _active;
 
     private BasicCharacter _owner;
@@ -19,7 +24,15 @@ public class PunchBehaviour : MonoBehaviour
 
         if (other.transform == transform || other.transform.IsChildOf(_owner.transform)) return;
 
-        
+        if (other.CompareTag("Player"))
+        {
+            CameraShake.Instance?.Shake();
+        }
+        else
+        {
+            PlaySound();
+        }
+
         if (other.TryGetComponent<HealthBehaviour>(out var health))
         {
             health.TakeDamage(_damage);
@@ -42,5 +55,12 @@ public class PunchBehaviour : MonoBehaviour
     public void SetDamage(int damage)
     {
         _damage = damage;
+    }
+
+    private void PlaySound()
+    {
+        if (_audioSource == null || _punchSound == null) return;
+
+        _audioSource.PlayOneShot(_punchSound);
     }
 }

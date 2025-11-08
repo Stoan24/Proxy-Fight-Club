@@ -39,11 +39,6 @@ public class AttackBehaviour : MonoBehaviour
             punch.SetDamage(_currentDamage);
         }
     }
-
-    public int GetDamage()
-    {
-        return _currentDamage;
-    }
 }
 
 

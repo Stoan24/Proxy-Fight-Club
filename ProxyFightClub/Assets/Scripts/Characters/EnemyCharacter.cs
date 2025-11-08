@@ -21,10 +21,19 @@ public class EnemyCharacter : BasicCharacter
     private NavMeshMovementBehaviour _navMesh;
 
     [SerializeField] private int _rewardPoints = 3;
+
+    [SerializeField] private bool _isBoss = false;
+
     public int RewardPoint
     {
         get => _rewardPoints;
         set => _rewardPoints = value;
+    }
+
+    public bool IsBoss
+    {
+        get => _isBoss;
+        set => _isBoss = value;
     }
 
     protected override void Awake()

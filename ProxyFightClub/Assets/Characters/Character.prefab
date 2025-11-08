@@ -245,6 +245,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _damage: 10
+  _punchSound: {fileID: 0}
+  _audioSource: {fileID: 0}
 --- !u!1 &4684349463268142596
 GameObject:
   m_ObjectHideFlags: 0
@@ -476,3 +478,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _damage: 10
+  _punchSound: {fileID: 0}
+  _audioSource: {fileID: 0}

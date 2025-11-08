@@ -1,12 +1,13 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class InteractionMenu : MonoBehaviour
 {
     public static InteractionMenu Instance;
 
-    [SerializeField] private TextMeshProUGUI _textLabel;
+    [SerializeField] private TextMeshProUGUI _interactionLabel;
 
     private void Awake()
     {
@@ -17,18 +18,18 @@ public class InteractionMenu : MonoBehaviour
 
     public void Show(string message)
     {
-        if (_textLabel != null)
+        if (_interactionLabel != null)
         {
-            _textLabel.gameObject.SetActive(true);
-            _textLabel.text = message;
+            _interactionLabel.gameObject.SetActive(true);
+            _interactionLabel.text = message;
         }
     }
 
     public void Hide()
     {
-        if (_textLabel != null)
+        if (_interactionLabel != null)
         {
-            _textLabel.gameObject.SetActive(false);
+            _interactionLabel.gameObject.SetActive(false);
         }
     }
 }

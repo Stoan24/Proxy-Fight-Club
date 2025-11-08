@@ -1,9 +1,19 @@
+using TMPro;
 using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameStateManager : MonoBehaviour
 {
     public static GameStateManager Instance;
+
+    [Header("EndScreen")]
+    [SerializeField] private GameObject _gameOverScreen;
+    [SerializeField] private TextMeshProUGUI _gameOverLabel;
+    [SerializeField] private Button _restartButton;
+    [SerializeField] private Button _exitButton;
+
 
     public bool IsFightActive { get; private set; }
     public bool IsInMenu { get; private set; }
@@ -24,6 +34,21 @@ public class GameStateManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        if (_gameOverScreen != null)
+        {
+            _gameOverScreen.SetActive(false);
+        }
+
+        if (_restartButton != null)
+        {
+            _restartButton.onClick.AddListener(OnRestart);
+        }
+
+        if (_exitButton != null)
+        {
+            _exitButton.onClick.AddListener(OnExit);
+        }
     }
 
     private void Start()
@@ -34,19 +59,7 @@ public class GameStateManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
     }
 
-    public void MenuLock(bool inMenu)
-    {
-        IsInMenu = inMenu;
-
-        var inputProvider = FindAnyObjectByType<CinemachineInputAxisController>();
-        if (inputProvider != null)
-        {
-            inputProvider.enabled = !inMenu;
-        }
-
-        Cursor.visible = inMenu;
-        Cursor.lockState = inMenu ? CursorLockMode.None : CursorLockMode.Locked;
-    }
+    #region FightManagement
 
     public void StartFight(EnemyCharacter enemy)
     {
@@ -72,20 +85,10 @@ public class GameStateManager : MonoBehaviour
         InteractionMenu.Instance?.Hide();
     }
 
-    private void OnPlayerDeath()
-    {
-        EndFight(false);
-    }
-
-    private void OnEnemyDeath()
-    {
-        EndFight(true);
-    }
-
     private void EndFight(bool playerWin)
     {
         if (_player == null || CurrentEnemy == null) return;
-        
+
         //remove deaths
         var playerHealth = _player.GetComponent<HealthBehaviour>();
         if (playerHealth != null)
@@ -118,5 +121,63 @@ public class GameStateManager : MonoBehaviour
 
         IsFightActive = false;
         CurrentEnemy = null;
+    }
+    #endregion
+
+    #region GameOverManagement
+    private void OnPlayerDeath()
+    {
+        EndFight(false);
+        ShowGameOver("Defeat");
+    }
+
+    private void OnEnemyDeath()
+    {
+        EndFight(true);
+
+        if (CurrentEnemy != null && CurrentEnemy.IsBoss)
+        {
+            ShowGameOver("Victory");
+        }
+
+        CurrentEnemy = null;
+    }
+
+    private void ShowGameOver(string text)
+    {
+        if (_gameOverScreen == null || _gameOverLabel == null) return;
+
+        _gameOverLabel.text = text;
+        _gameOverScreen.SetActive(true);
+    }
+
+    private void OnRestart()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    private void OnExit()
+    {
+        #if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+        #else
+            Application.Quit();
+        #endif
+    }
+
+    #endregion
+
+    public void MenuLock(bool inMenu)
+    {
+        IsInMenu = inMenu;
+
+        var inputProvider = FindAnyObjectByType<CinemachineInputAxisController>();
+        if (inputProvider != null)
+        {
+            inputProvider.enabled = !inMenu;
+        }
+
+        Cursor.visible = inMenu;
+        Cursor.lockState = inMenu ? CursorLockMode.None : CursorLockMode.Locked;
     }
 }
