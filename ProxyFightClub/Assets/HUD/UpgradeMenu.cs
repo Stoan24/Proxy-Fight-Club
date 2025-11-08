@@ -10,7 +10,7 @@ public class UpgradeMenu : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _pointsLabel;
     [SerializeField] private TextMeshProUGUI _statsLabel;
 
-    [SerializeField] private PlayerInput _playerInput;
+    [SerializeField] private CinemachineInputAxisController _cinemachineInput;
     private InputAction _lookAction;
 
     private bool _isActive = false;
@@ -30,11 +30,6 @@ public class UpgradeMenu : MonoBehaviour
         if (_playerStats != null)
         {
             _playerStats.OnStatsChanged += RefreshMenu;
-        }
-
-        if (_playerInput != null)
-        {
-            _lookAction = _playerInput.actions["Look"];
         }
 
 
@@ -59,10 +54,22 @@ public class UpgradeMenu : MonoBehaviour
         if (_isActive)
         {
             OpenMenu();
+
+            if (UpgradeReminderMenu.Instance != null)
+            {
+                UpgradeReminderMenu.Instance.Hide();
+            }
+
+            InteractionMenu.Instance?.Hide();
         }
         else
         {
             CloseMenu();
+
+            if (UpgradeReminderMenu.Instance != null && _playerStats.AvailablePoints > 0)
+            {
+                UpgradeReminderMenu.Instance.Show();
+            }
         }
     }
 
@@ -71,9 +78,11 @@ public class UpgradeMenu : MonoBehaviour
         RefreshMenu();
         GameStateManager.Instance?.MenuLock(true);
 
-        if (_lookAction != null)
+        _lookAction?.Disable();
+
+        if (_cinemachineInput != null)
         {
-            _lookAction.Disable();
+            _cinemachineInput.enabled = false;
         }
 
         Cursor.visible = true;
@@ -84,9 +93,11 @@ public class UpgradeMenu : MonoBehaviour
     {
         GameStateManager.Instance?.MenuLock(false);
 
-        if (_lookAction != null)
+        _lookAction?.Enable();
+
+        if (_cinemachineInput != null)
         {
-            _lookAction.Enable();
+            _cinemachineInput.enabled = true;
         }
 
         Cursor.visible = false;

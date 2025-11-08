@@ -22,7 +22,7 @@ public class HealthBehaviour : MonoBehaviour
         _currentHealth -= damage;
         _currentHealth = Mathf.Max(0, _currentHealth);
 
-        //OnHealthChanged?.Invoke(_currentHealth, _maxHealth);
+        CameraShake.Instance?.Shake();
 
         if (_currentHealth > 0f) return;
 
@@ -34,9 +34,9 @@ public class HealthBehaviour : MonoBehaviour
         _currentHealth = _maxHealth;
     }
 
-    public void IncreaseMaxHealth(int amount)
+    public void SetMaxHealth(int amount)
     {
-        _maxHealth += amount;
+        _maxHealth = amount;
         HealFull();
     }
 

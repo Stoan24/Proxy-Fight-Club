@@ -1,3 +1,4 @@
+using Unity.Cinemachine;
 using UnityEngine;
 
 public class GameStateManager : MonoBehaviour
@@ -36,6 +37,15 @@ public class GameStateManager : MonoBehaviour
     public void MenuLock(bool inMenu)
     {
         IsInMenu = inMenu;
+
+        var inputProvider = FindAnyObjectByType<CinemachineInputAxisController>();
+        if (inputProvider != null)
+        {
+            inputProvider.enabled = !inMenu;
+        }
+
+        Cursor.visible = inMenu;
+        Cursor.lockState = inMenu ? CursorLockMode.None : CursorLockMode.Locked;
     }
 
     public void StartFight(EnemyCharacter enemy)
@@ -58,6 +68,8 @@ public class GameStateManager : MonoBehaviour
         {
             _enemyHealthBar.ShowBar(enemy);
         }
+
+        InteractionMenu.Instance?.Hide();
     }
 
     private void OnPlayerDeath()

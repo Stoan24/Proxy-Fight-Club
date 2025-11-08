@@ -17,13 +17,15 @@ public class PlayerCharacter : BasicCharacter
     [SerializeField] private InputActionReference _escape;
     [SerializeField] private float _interactDistance = 5f;
 
+    [SerializeField] private Transform _cameraTransform;
+
     private EnemyCharacter _currentEnemy;
     private const string ENEMY_LAYER = "Enemy";
 
     private UpgradeStation _currentStation;
     private PlayerStats _stats;
 
-    [SerializeField] private Transform _cameraTransform;
+    private InteractionMenu _interactionMenu;
 
     protected override void Awake()
     {
@@ -32,6 +34,8 @@ public class PlayerCharacter : BasicCharacter
         if (_inputAsset == null) return;
 
         _dodgeAction.ToInputAction().performed += HandleDodgeInput;
+
+        _interactionMenu = FindAnyObjectByType<InteractionMenu>();
     }
 
     private void Start()
@@ -91,12 +95,16 @@ public class PlayerCharacter : BasicCharacter
 
     private void HandleInteraction()
     {
-        if (_interaction == null || _cameraTransform == null) return;
-
+        if (_interaction == null || _cameraTransform == null)
+        {
+            _interactionMenu?.Hide();
+            return;
+        }
 
         //rayCast forward from camera
         if (!Physics.Raycast(_cameraTransform.position, _cameraTransform.forward, out var hitInfo, _interactDistance))
         {
+            _interactionMenu?.Hide();
             RemoveEnemy();
             return;
         }
@@ -106,6 +114,8 @@ public class PlayerCharacter : BasicCharacter
         var enemy = hitInfo.transform.GetComponentInParent<EnemyCharacter>();
         if (enemy != null)
         {
+            _interactionMenu?.Show($"Press E to fight {enemy.name}");
+
             if (_currentEnemy != enemy)
             {
                 RemoveEnemy();
@@ -127,12 +137,20 @@ public class PlayerCharacter : BasicCharacter
         // -- UPGRADE STATION --
         if (hitInfo.transform.TryGetComponent<UpgradeStation>(out var station))
         {
+            _interactionMenu?.Show("Press E to open the upgrade menu");
+
             if (_interaction.ToInputAction().WasPerformedThisFrame())
             {
                 _currentStation = station;
                 _currentStation.OpenMenu();
             }
+
+            return;
         }
+
+        _interactionMenu?.Hide();
+
+        RemoveEnemy();
     }
 
     private void RemoveEnemy()

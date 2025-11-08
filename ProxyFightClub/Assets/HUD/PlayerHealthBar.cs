@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HUD : MonoBehaviour
+public class PlayerHealthBar : MonoBehaviour
 {
     [SerializeField] private Image _healthBar;
     [SerializeField] private TextMeshProUGUI _healthBarLabel;
@@ -28,6 +28,7 @@ public class HUD : MonoBehaviour
     public void UpgradedHealth(int current, int max)
     {
         SetHealth(current, max);
+        _playerHealth.SetMaxHealth(max);
     }
 
     private void Update()

@@ -1,12 +1,10 @@
 using System;
 using UnityEngine;
 
-
-
 [System.Serializable]
 public class PlayerStats : MonoBehaviour
 {
-    private HUD _hud;
+    private PlayerHealthBar _hud;
 
     public enum PlayerStatType
     {
@@ -53,7 +51,7 @@ public class PlayerStats : MonoBehaviour
 
     private void Awake()
     {
-        _hud = FindAnyObjectByType<HUD>();
+        _hud = FindAnyObjectByType<PlayerHealthBar>();
     }
 
     public void AddStatPoints(int amount)
@@ -70,7 +68,6 @@ public class PlayerStats : MonoBehaviour
         {
             case PlayerStatType.Health:
                 _maxHealth += _healthIncrease;
-
                 _hud.UpgradedHealth(_maxHealth, _maxHealth);
                 break;
             case PlayerStatType.Strength:
