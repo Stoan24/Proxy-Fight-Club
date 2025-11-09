@@ -22,9 +22,6 @@ public class MovementBehaviour : MonoBehaviour
     
     protected GameObject _target;
 
-    private const float GROUND_CHECK_DISTANCE = 0.2f;
-    private const string GROUND_LAYER = "Ground";
-
     public Vector3 DesiredMovementDirection
     {
         get => _desiredMovementDirection;

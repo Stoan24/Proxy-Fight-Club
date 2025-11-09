@@ -11,7 +11,7 @@ public class EnemyHealthBar : MonoBehaviour
 
     private HealthBehaviour _enemyHealth;
 
-    private void Start()
+    private void Awake()
     {
         HideBar();
     }

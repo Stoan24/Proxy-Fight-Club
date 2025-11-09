@@ -125,7 +125,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _attackRange: 2
-  _attackCooldown: 0
+  _attackCooldown: 1
   _defaultMaterial: {fileID: 2100000, guid: 550ec4ff7df30654fbc8c528770195bd, type: 2}
   _highlinghtMaterial: {fileID: 2100000, guid: 58c0ab0cbf077d345b70923fddcda5ba, type: 2}
   _rewardPoints: 3
@@ -185,6 +185,11 @@ MonoBehaviour:
   _dodgeCooldown: 1
   _dodgeDuration: 0.2
   _maxDistanceFromPlayer: 2
+  _pauseChance: 0.15
+  _sidestepChance: 0.25
+  _pauseDuration: 1
+  _sidestepDistance: 2
+  _decisionInterval: 2
 --- !u!95 &8145388132650909143 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 3899228183419552242, guid: 7a3004f99b48aac4a8470db5b0bec486, type: 3}

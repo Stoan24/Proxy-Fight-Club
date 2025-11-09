@@ -117,7 +117,7 @@ MonoBehaviour:
   _dodgeAction: {fileID: -8587079358033249655, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   _interaction: {fileID: -7532417424042380648, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   _escape: {fileID: 2964728653401116478, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  _interactDistance: 3
+  _interactDistance: 2
   _cameraTransform: {fileID: 0}
 --- !u!114 &-1196464922122518142
 MonoBehaviour:

@@ -8,12 +8,13 @@ public class GameStateManager : MonoBehaviour
 {
     public static GameStateManager Instance;
 
+    [SerializeField] private CinemachineInputAxisController _cinemachineInput;
+
     [Header("EndScreen")]
     [SerializeField] private GameObject _gameOverScreen;
     [SerializeField] private TextMeshProUGUI _gameOverLabel;
     [SerializeField] private Button _restartButton;
     [SerializeField] private Button _exitButton;
-
 
     public bool IsFightActive { get; private set; }
     public bool IsInMenu { get; private set; }
@@ -129,6 +130,14 @@ public class GameStateManager : MonoBehaviour
     {
         EndFight(false);
         ShowGameOver("Defeat");
+
+        if (_cinemachineInput != null)
+        {
+            _cinemachineInput.enabled = false;
+        }
+
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
     }
 
     private void OnEnemyDeath()
@@ -138,6 +147,14 @@ public class GameStateManager : MonoBehaviour
         if (CurrentEnemy != null && CurrentEnemy.IsBoss)
         {
             ShowGameOver("Victory");
+
+            if (_cinemachineInput != null)
+            {
+                _cinemachineInput.enabled = false;
+            }
+
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
         }
 
         CurrentEnemy = null;
@@ -154,6 +171,14 @@ public class GameStateManager : MonoBehaviour
     private void OnRestart()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+
+        if (_cinemachineInput != null)
+        {
+            _cinemachineInput.enabled = true;
+        }
+
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.None;
     }
 
     private void OnExit()
@@ -164,20 +189,5 @@ public class GameStateManager : MonoBehaviour
             Application.Quit();
         #endif
     }
-
     #endregion
-
-    public void MenuLock(bool inMenu)
-    {
-        IsInMenu = inMenu;
-
-        var inputProvider = FindAnyObjectByType<CinemachineInputAxisController>();
-        if (inputProvider != null)
-        {
-            inputProvider.enabled = !inMenu;
-        }
-
-        Cursor.visible = inMenu;
-        Cursor.lockState = inMenu ? CursorLockMode.None : CursorLockMode.Locked;
-    }
 }

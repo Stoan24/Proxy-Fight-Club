@@ -110,7 +110,6 @@ public class PlayerCharacter : BasicCharacter
         }
 
         // -- ENEMY --
-
         var enemy = hitInfo.transform.GetComponentInParent<EnemyCharacter>();
         if (enemy != null)
         {

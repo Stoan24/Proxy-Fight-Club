@@ -15,7 +15,6 @@ public class InteractionMenu : MonoBehaviour
         Hide();
     }
 
-
     public void Show(string message)
     {
         if (_interactionLabel != null)

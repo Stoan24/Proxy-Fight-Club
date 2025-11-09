@@ -23,7 +23,7 @@ public class UpgradeMenu : MonoBehaviour
         set => _isActive = value;
     }
 
-    private void Start()
+    private void Awake()
     {
         _playerStats = FindAnyObjectByType<PlayerStats>();
 
@@ -76,7 +76,6 @@ public class UpgradeMenu : MonoBehaviour
     private void OpenMenu()
     {
         RefreshMenu();
-        GameStateManager.Instance?.MenuLock(true);
 
         _lookAction?.Disable();
 
@@ -91,8 +90,6 @@ public class UpgradeMenu : MonoBehaviour
 
     private void CloseMenu()
     {
-        GameStateManager.Instance?.MenuLock(false);
-
         _lookAction?.Enable();
 
         if (_cinemachineInput != null)

@@ -10,7 +10,7 @@ public class EnemyCharacter : BasicCharacter
     private GameObject _playerTarget;
 
     [SerializeField] private float _attackRange = 2.0f;
-    [SerializeField] private float _attackCooldown;
+    [SerializeField] private float _attackCooldown = 1f;
     private float _attackTimer = 2.0f;
 
     [SerializeField] private Material _defaultMaterial;
@@ -98,9 +98,6 @@ public class EnemyCharacter : BasicCharacter
         //check distance from player
         var sqrDistance = (transform.position - _playerTarget.transform.position).sqrMagnitude;
 
-        //use a timer between attacks
-        _attackTimer -= Time.deltaTime;
-
         if (sqrDistance <= (_attackRange * _attackRange) && _attackTimer <= 0f)
         {
             bool isLeft = (Random.Range(0, 2) == 0);
@@ -108,6 +105,10 @@ public class EnemyCharacter : BasicCharacter
 
             //Reset and use a random interval
             _attackTimer = Random.Range(_attackCooldown * 0.8f, _attackCooldown * 1.2f);
+        }
+        else
+        {
+            _attackTimer -= Time.deltaTime;
         }
     }
 
