@@ -92,6 +92,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3972540421973610166, guid: 7a3004f99b48aac4a8470db5b0bec486, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6521216310212435377}
+    - targetCorrespondingSourceObject: {fileID: 3972540421973610166, guid: 7a3004f99b48aac4a8470db5b0bec486, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 617411229800684737}
   m_SourcePrefab: {fileID: 100100000, guid: 7a3004f99b48aac4a8470db5b0bec486, type: 3}
 --- !u!1 &5250704271570586101 stripped
 GameObject:
@@ -136,6 +139,7 @@ MonoBehaviour:
   _dodgePower: 20
   _dodgeCooldown: 1
   _dodgeDuration: 0.2
+  _staminaCost: 5
 --- !u!114 &-9167561653996665647
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -151,6 +155,7 @@ MonoBehaviour:
   _leftArmAnimator: {fileID: 5324280191565121201}
   _rightArmAnimator: {fileID: 7607568630959065407}
   _baseDamage: 10
+  _staminaCost: 10
 --- !u!114 &1646254636371398921
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -267,6 +272,22 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &617411229800684737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5250704271570586101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 710c800bba14b5246879ab903dff06ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maxStamina: 20
+  _currentStamina: 20
+  _regenRate: 5
+  _regenDelay: 1
 --- !u!95 &5324280191565121201 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 3899228183419552242, guid: 7a3004f99b48aac4a8470db5b0bec486, type: 3}

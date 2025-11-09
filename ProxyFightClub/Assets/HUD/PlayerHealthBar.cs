@@ -17,7 +17,7 @@ public class PlayerHealthBar : MonoBehaviour
 
         if (_playerHealth != null)
         {
-            SetHealth(_playerHealth.currentHealth, _playerHealth.maxHealth);
+            SetHealth(_playerHealth.CurrentHealth, _playerHealth.MaxHealth);
         }
         else
         {
@@ -44,7 +44,7 @@ public class PlayerHealthBar : MonoBehaviour
         }
         else
         {
-            SetHealth(_playerHealth.currentHealth, _playerHealth.maxHealth);
+            SetHealth(_playerHealth.CurrentHealth, _playerHealth.MaxHealth);
         }
     }
 

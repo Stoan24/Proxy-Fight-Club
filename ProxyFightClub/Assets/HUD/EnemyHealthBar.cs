@@ -29,7 +29,7 @@ public class EnemyHealthBar : MonoBehaviour
         }
         else
         {
-            SetHealth(_enemyHealth.currentHealth, _enemyHealth.maxHealth);
+            SetHealth(_enemyHealth.CurrentHealth, _enemyHealth.MaxHealth);
         }
     }
 

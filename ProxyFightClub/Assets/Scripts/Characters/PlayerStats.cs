@@ -10,18 +10,18 @@ public class PlayerStats : MonoBehaviour
     {
         Health,
         Strength,
-        Speed
+        Stamina
     }
 
     [Header("Base Stats")] 
     [SerializeField] private int _maxHealth = 100;
     [SerializeField] private int _strength = 10;
-    [SerializeField] private int _speed = 5;
+    [SerializeField] private int _stamina = 20;
 
     [Header("Increase Amount")]
     [SerializeField] private int _healthIncrease = 10;
     [SerializeField] private int _strengthIncrease = 5;
-    [SerializeField] private int _speedIncrease = 2;
+    [SerializeField] private int __staminaIncrease = 5;
 
     [SerializeField] private int _statpoints = 0;
 
@@ -37,10 +37,10 @@ public class PlayerStats : MonoBehaviour
         get => _strength;
         set => _strength = value;
     }
-    public int Speed
+    public int Stamina
     {
-        get => _speed;
-        set => _speed = value;
+        get => _stamina;
+        set => _stamina = value;
     }
 
     public int AvailablePoints
@@ -73,8 +73,8 @@ public class PlayerStats : MonoBehaviour
             case PlayerStatType.Strength:
                 _strength += _strengthIncrease;
                 break;
-            case PlayerStatType.Speed:
-                _speed += _speedIncrease;
+            case PlayerStatType.Stamina:
+                _stamina += __staminaIncrease;
                 break;
             default:
                 return false;

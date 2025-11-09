@@ -112,9 +112,9 @@ public class UpgradeMenu : MonoBehaviour
         UpgradeStat(PlayerStats.PlayerStatType.Strength);
     }
 
-    public void UpgradeSpeed()
+    public void UpgradeStamina()
     {
-        UpgradeStat(PlayerStats.PlayerStatType.Speed);
+        UpgradeStat(PlayerStats.PlayerStatType.Stamina);
     }
 
     private void UpgradeStat(PlayerStats.PlayerStatType stat)
@@ -140,7 +140,7 @@ public class UpgradeMenu : MonoBehaviour
         {
             _statsLabel.text = $"Health: {_playerStats.Health}\n" +
                                $"Strength: {_playerStats.Strength}\n" +
-                               $"Speed: {_playerStats.Speed}\n";
+                               $"Stamina: {_playerStats.Stamina}\n";
         }
     }
 

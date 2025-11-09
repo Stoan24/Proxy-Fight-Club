@@ -7,8 +7,8 @@ public class HealthBehaviour : MonoBehaviour
     [SerializeField] private int _maxHealth = 100;
     private int _currentHealth;
 
-    public int currentHealth { get { return _currentHealth; } }
-    public int maxHealth { get { return _maxHealth; } }
+    public int CurrentHealth { get { return _currentHealth; } }
+    public int MaxHealth { get { return _maxHealth; } }
 
     public event Action OnDeath;
 

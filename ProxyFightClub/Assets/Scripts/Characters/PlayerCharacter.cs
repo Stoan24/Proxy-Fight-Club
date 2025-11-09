@@ -57,9 +57,9 @@ public class PlayerCharacter : BasicCharacter
             _attackBehaviour.SetDamage(_stats.Strength);
         }
 
-        if (_movementBehaviour != null)
+        if (_staminaBehaviour != null)
         {
-            _movementBehaviour.SetSpeed(_stats.Speed);
+            _staminaBehaviour.SetStamina(_stats.Stamina);
         }
     }
 

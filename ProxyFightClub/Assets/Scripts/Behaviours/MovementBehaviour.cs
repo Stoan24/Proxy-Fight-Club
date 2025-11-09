@@ -12,9 +12,12 @@ public class MovementBehaviour : MonoBehaviour
     [SerializeField] protected float _dodgePower = 10f;
     [SerializeField] private float _dodgeCooldown = 1f;
     [SerializeField] private float _dodgeDuration = 0.2f;
+    [SerializeField] private float _staminaCost = 5f;
+
     private float _dodgeTimer;
     private bool _isDodging = false;
 
+    private StaminaBehaviour _stamina;
 
     private Rigidbody _rigidBody;
 
@@ -37,6 +40,7 @@ public class MovementBehaviour : MonoBehaviour
     protected virtual void Awake()
     {
         _rigidBody = GetComponent<Rigidbody>();
+        _stamina = GetComponent<StaminaBehaviour>();
     }
 
     protected virtual void FixedUpdate()
@@ -68,6 +72,8 @@ public class MovementBehaviour : MonoBehaviour
     }
     public void Dodge(Vector2 moveInput)
     {
+        if (_stamina != null && !_stamina.SpendStamina(_staminaCost)) return;
+
         if (_isDodging || _dodgeTimer > 0f) return;
 
         _dodgeTimer = _dodgeCooldown;
@@ -93,10 +99,5 @@ public class MovementBehaviour : MonoBehaviour
     private void EndDodge()
     {
         _isDodging = false;
-    }
-
-    public void SetSpeed(float speed)
-    {
-        _movementSpeed = speed;
     }
 }

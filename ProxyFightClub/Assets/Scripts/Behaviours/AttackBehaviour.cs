@@ -8,6 +8,9 @@ public class AttackBehaviour : MonoBehaviour
     [SerializeField] private Animator _rightArmAnimator;
 
     [SerializeField] private int _baseDamage = 10;
+    [SerializeField] private float _staminaCost = 10f;
+
+    private StaminaBehaviour _stamina;
 
     private int _currentDamage;
 
@@ -17,10 +20,14 @@ public class AttackBehaviour : MonoBehaviour
     public void Awake()
     {
         _currentDamage = _baseDamage;
+
+        _stamina = GetComponent<StaminaBehaviour>();
     }
 
     public void Attack(bool isLeft)
     {
+        if (_stamina != null && !_stamina.SpendStamina(_staminaCost)) return;
+
         if (_leftArmAnimator == null || _rightArmAnimator == null) return;
 
         var armAnimator = isLeft ? _leftArmAnimator : _rightArmAnimator;
