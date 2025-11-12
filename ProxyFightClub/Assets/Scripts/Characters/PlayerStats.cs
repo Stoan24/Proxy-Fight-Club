@@ -18,6 +18,9 @@ public class PlayerStats : MonoBehaviour
     [SerializeField] private int _strength = 10;
     [SerializeField] private int _stamina = 20;
 
+    private int _dodgeUnlockTreshhold = 30;
+    private bool _canDodge = false;
+
     [Header("Increase Amount")]
     [SerializeField] private int _healthIncrease = 10;
     [SerializeField] private int _strengthIncrease = 5;
@@ -48,10 +51,17 @@ public class PlayerStats : MonoBehaviour
         get => _statpoints;
         set => _statpoints = value;
     }
+    public bool CanDodge
+    {
+        get => _canDodge;
+        set => _canDodge = value;
+    }
 
     private void Awake()
     {
         _hud = FindAnyObjectByType<PlayerHealthBar>();
+
+        _canDodge = false;
     }
 
     public void AddStatPoints(int amount)
@@ -78,6 +88,11 @@ public class PlayerStats : MonoBehaviour
                 break;
             default:
                 return false;
+        }
+
+        if (_stamina >= _dodgeUnlockTreshhold && !_canDodge)
+        {
+            _canDodge = true;
         }
 
         _statpoints--;

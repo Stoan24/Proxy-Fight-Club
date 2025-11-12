@@ -8,6 +8,13 @@ public class UpgradeStation : MonoBehaviour
     {
         if (_menu == null) return;
 
-        _menu.ToggleMenu();
+        _menu.OpenMenu();
+    }
+
+    public void CloseMenu()
+    {
+        if (_menu == null) return;
+
+        _menu.CloseMenu();
     }
 }

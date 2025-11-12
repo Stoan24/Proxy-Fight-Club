@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 
 public class AttackBehaviour : MonoBehaviour
 {
@@ -12,6 +13,8 @@ public class AttackBehaviour : MonoBehaviour
 
     private StaminaBehaviour _stamina;
 
+    private UpgradeMenu _upgradeMenu;
+
     private int _currentDamage;
 
     private const string PUNCH_TRIGGER = "Punch";
@@ -22,17 +25,31 @@ public class AttackBehaviour : MonoBehaviour
         _currentDamage = _baseDamage;
 
         _stamina = GetComponent<StaminaBehaviour>();
+        _upgradeMenu = FindAnyObjectByType<UpgradeMenu>();
     }
 
     public void Attack(bool isLeft)
     {
-        if (_stamina != null && !_stamina.SpendStamina(_staminaCost)) return;
-
         if (_leftArmAnimator == null || _rightArmAnimator == null) return;
 
-        var armAnimator = isLeft ? _leftArmAnimator : _rightArmAnimator;
-
-        armAnimator.SetTrigger(PUNCH_TRIGGER);
+        if (_upgradeMenu != null && _upgradeMenu.IsActive) return;
+        
+        if (isLeft)
+        {
+            if (!_leftArmAnimator.GetCurrentAnimatorStateInfo(0).IsName("LeftPunch"))
+            {
+                if (_stamina != null && !_stamina.SpendStamina(_staminaCost)) return;
+                _leftArmAnimator.SetTrigger(PUNCH_TRIGGER);
+            }
+        }
+        else
+        {
+            if (!_rightArmAnimator.GetCurrentAnimatorStateInfo(0).IsName("LeftPunch"))
+            {
+                if (_stamina != null && !_stamina.SpendStamina(_staminaCost)) return;
+                _rightArmAnimator.SetTrigger(PUNCH_TRIGGER);
+            }
+        }
     }
 
     public void SetDamage(int damage)

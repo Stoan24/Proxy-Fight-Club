@@ -99,7 +99,6 @@ GameObject:
   - component: {fileID: 2284827036137736291}
   - component: {fileID: 8765848068518696055}
   - component: {fileID: 6650154008561876635}
-  - component: {fileID: 5000419374130383259}
   m_Layer: 9
   m_Name: Desk
   m_TagString: Untagged
@@ -193,7 +192,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 59840301441870835}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 5838842833648ee438e50dcbe9316b12, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -207,28 +206,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2.3029, y: 0.9655699, z: 1.2774671}
   m_Center: {x: -0.00000023841858, y: 0.48278496, z: 0.000000059604645}
---- !u!64 &5000419374130383259
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 59840301441870835}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: 1ecf1a56521a0df459d3e2497fc5a210, type: 3}
 --- !u!1 &135877469554285647
 GameObject:
   m_ObjectHideFlags: 0

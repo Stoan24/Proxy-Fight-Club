@@ -10,7 +10,7 @@ public class PlayerHealthBar : MonoBehaviour
 
     private HealthBehaviour _playerHealth;
 
-    private void Start()
+    private void Awake()
     {
         var player = FindFirstObjectByType<PlayerCharacter>();
         _playerHealth = player?.GetComponent<HealthBehaviour>();

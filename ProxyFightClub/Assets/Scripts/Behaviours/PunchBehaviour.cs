@@ -20,18 +20,21 @@ public class PunchBehaviour : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if ( GameStateManager.Instance == null || !GameStateManager.Instance.IsFightActive) return;
+
         if (!_active) return;
 
         if (other.transform == transform || other.transform.IsChildOf(_owner.transform)) return;
+
+
+        if (_audioSource == null || _punchSound == null) return;
 
         if (other.CompareTag("Player"))
         {
             CameraShake.Instance?.Shake();
         }
-        else
-        {
-            PlaySound();
-        }
+
+        _audioSource.PlayOneShot(_punchSound);
 
         if (other.TryGetComponent<HealthBehaviour>(out var health))
         {
@@ -55,12 +58,5 @@ public class PunchBehaviour : MonoBehaviour
     public void SetDamage(int damage)
     {
         _damage = damage;
-    }
-
-    private void PlaySound()
-    {
-        if (_audioSource == null || _punchSound == null) return;
-
-        _audioSource.PlayOneShot(_punchSound);
     }
 }

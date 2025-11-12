@@ -1,7 +1,6 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.PlayerLoop;
+using UnityEngine.Rendering;
 
 public class PlayerCharacter : BasicCharacter
 {
@@ -77,20 +76,32 @@ public class PlayerCharacter : BasicCharacter
 
     private void Update()
     {
-        if (_escape.ToInputAction().WasPerformedThisFrame())
+        if (_escape.ToInputAction().WasPerformedThisFrame() && GameStateManager.Instance != null)
         {
-            if (_currentStation != null)
+            if (!GameStateManager.Instance.IsInMenu)
             {
-                _currentStation.OpenMenu();
-                _currentStation = null;
+                if (_currentStation != null)
+                {
+                    _currentStation.CloseMenu();
+                    _currentStation = null;
+                }
+                
+                GameStateManager.Instance.ShowMenu("Pause");
             }
+            else
+            {
+                GameStateManager.Instance.HideMenu();
+            }
+            
         }
 
         if (GameStateManager.Instance != null && GameStateManager.Instance.IsInMenu) return;
+        HandleInteraction();
+
+        if (_currentStation != null) return;
 
         HandleMovementInput();
         HandleAttackInput();
-        HandleInteraction();
     }
 
     private void HandleInteraction()
@@ -113,7 +124,10 @@ public class PlayerCharacter : BasicCharacter
         var enemy = hitInfo.transform.GetComponentInParent<EnemyCharacter>();
         if (enemy != null)
         {
-            _interactionMenu?.Show($"Press E to fight {enemy.name}");
+            if (!GameStateManager.Instance.IsFightActive)
+            {
+                _interactionMenu?.Show($"Press E to fight {enemy.name}");
+            }
 
             if (_currentEnemy != enemy)
             {
@@ -134,19 +148,29 @@ public class PlayerCharacter : BasicCharacter
         RemoveEnemy();
 
         // -- UPGRADE STATION --
+
         if (hitInfo.transform.TryGetComponent<UpgradeStation>(out var station))
         {
-            _interactionMenu?.Show("Press E to open the upgrade menu");
+            if (_currentStation == null)
+            {
+                _interactionMenu?.Show("Press E to open the upgrade menu");
+            }
 
             if (_interaction.ToInputAction().WasPerformedThisFrame())
             {
-                _currentStation = station;
-                _currentStation.OpenMenu();
+                if (_currentStation == null)
+                {
+                    _currentStation = station;
+                    _currentStation.OpenMenu();
+                }
+                else
+                {
+                    _currentStation.CloseMenu();
+                    _currentStation = null;
+                }
             }
-
             return;
         }
-
         _interactionMenu?.Hide();
 
         RemoveEnemy();
@@ -176,6 +200,7 @@ public class PlayerCharacter : BasicCharacter
     private void HandleDodgeInput(InputAction.CallbackContext context)
     {
         if (_movementBehaviour == null) return;
+        if (!_stats.CanDodge) return;
 
         Vector2 moveInput = _movementAction.action.ReadValue<Vector2>();
 

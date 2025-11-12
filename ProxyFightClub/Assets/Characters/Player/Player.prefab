@@ -8,6 +8,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1310160141755036472, guid: 7a3004f99b48aac4a8470db5b0bec486, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1310160141755036472, guid: 7a3004f99b48aac4a8470db5b0bec486, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.25
+      objectReference: {fileID: 0}
     - target: {fileID: 3972540421973610166, guid: 7a3004f99b48aac4a8470db5b0bec486, type: 3}
       propertyPath: m_Name
       value: Player
@@ -170,10 +178,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _maxHealth: 100
   _strength: 10
-  _speed: 5
+  _stamina: 20
   _healthIncrease: 10
   _strengthIncrease: 5
-  _speedIncrease: 2
+  __staminaIncrease: 5
   _statpoints: 0
 --- !u!82 &6521216310212435377
 AudioSource:

@@ -2,6 +2,7 @@ using TMPro;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class GameStateManager : MonoBehaviour
@@ -11,13 +12,20 @@ public class GameStateManager : MonoBehaviour
     [SerializeField] private CinemachineInputAxisController _cinemachineInput;
 
     [Header("EndScreen")]
-    [SerializeField] private GameObject _gameOverScreen;
+    [SerializeField] private GameObject _menuScreen;
     [SerializeField] private TextMeshProUGUI _gameOverLabel;
     [SerializeField] private Button _restartButton;
     [SerializeField] private Button _exitButton;
 
+    private bool _isInMenu = false;
+
     public bool IsFightActive { get; private set; }
-    public bool IsInMenu { get; private set; }
+
+    public bool IsInMenu
+    {
+        get => _isInMenu;
+        set => _isInMenu = value;
+    }
 
     private PlayerCharacter _player;
 
@@ -36,9 +44,9 @@ public class GameStateManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        if (_gameOverScreen != null)
+        if (_menuScreen != null)
         {
-            _gameOverScreen.SetActive(false);
+            _menuScreen.SetActive(false);
         }
 
         if (_restartButton != null)
@@ -64,7 +72,7 @@ public class GameStateManager : MonoBehaviour
 
     public void StartFight(EnemyCharacter enemy)
     {
-        if (IsFightActive || IsInMenu) return;
+        if (IsFightActive || _isInMenu) return;
 
         _player = FindFirstObjectByType<PlayerCharacter>();
         CurrentEnemy = enemy;
@@ -129,7 +137,7 @@ public class GameStateManager : MonoBehaviour
     private void OnPlayerDeath()
     {
         EndFight(false);
-        ShowGameOver("Defeat");
+        ShowMenu("Defeat");
 
         if (_cinemachineInput != null)
         {
@@ -142,35 +150,37 @@ public class GameStateManager : MonoBehaviour
 
     private void OnEnemyDeath()
     {
-        EndFight(true);
-
         if (CurrentEnemy != null && CurrentEnemy.IsBoss)
         {
-            ShowGameOver("Victory");
-
-            if (_cinemachineInput != null)
-            {
-                _cinemachineInput.enabled = false;
-            }
-
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
+            ShowMenu("Victory");
         }
 
-        CurrentEnemy = null;
+        EndFight(true);
     }
 
-    private void ShowGameOver(string text)
+    public void ShowMenu(string text)
     {
-        if (_gameOverScreen == null || _gameOverLabel == null) return;
+        if (_cinemachineInput != null)
+        {
+            _cinemachineInput.enabled = false;
+        }
+
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+
+        if (_menuScreen == null || _gameOverLabel == null) return;
 
         _gameOverLabel.text = text;
-        _gameOverScreen.SetActive(true);
+        _menuScreen.SetActive(true);
+        _isInMenu = true;
     }
 
-    private void OnRestart()
+    public void HideMenu()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        if (_menuScreen == null) return;
+
+        _menuScreen.SetActive(false);
+        _isInMenu = false;
 
         if (_cinemachineInput != null)
         {
@@ -179,6 +189,19 @@ public class GameStateManager : MonoBehaviour
 
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.None;
+    }
+
+    private void OnRestart()
+    {
+        if (_cinemachineInput != null)
+        {
+            _cinemachineInput.enabled = false;
+        }
+
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+        
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     private void OnExit()

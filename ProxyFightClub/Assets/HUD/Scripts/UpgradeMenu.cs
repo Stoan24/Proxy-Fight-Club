@@ -3,6 +3,7 @@ using TMPro;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 
 public class UpgradeMenu : MonoBehaviour
 {
@@ -26,12 +27,10 @@ public class UpgradeMenu : MonoBehaviour
     private void Awake()
     {
         _playerStats = FindAnyObjectByType<PlayerStats>();
-
         if (_playerStats != null)
         {
             _playerStats.OnStatsChanged += RefreshMenu;
         }
-
 
         if (_menu != null)
         {
@@ -43,38 +42,13 @@ public class UpgradeMenu : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
     }
 
-    public void ToggleMenu()
+    public void OpenMenu()
     {
         if (_menu == null) return;
 
-        _isActive = !_isActive;
-
+        _isActive = true;
         _menu.SetActive(_isActive);
 
-        if (_isActive)
-        {
-            OpenMenu();
-
-            if (UpgradeReminderMenu.Instance != null)
-            {
-                UpgradeReminderMenu.Instance.Hide();
-            }
-
-            InteractionMenu.Instance?.Hide();
-        }
-        else
-        {
-            CloseMenu();
-
-            if (UpgradeReminderMenu.Instance != null && _playerStats.AvailablePoints > 0)
-            {
-                UpgradeReminderMenu.Instance.Show();
-            }
-        }
-    }
-
-    private void OpenMenu()
-    {
         RefreshMenu();
 
         _lookAction?.Disable();
@@ -86,10 +60,18 @@ public class UpgradeMenu : MonoBehaviour
 
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
+
+        UpgradeReminderMenu.Instance?.Hide();
+        InteractionMenu.Instance?.Hide();
     }
 
-    private void CloseMenu()
+    public void CloseMenu()
     {
+        if (_menu == null) return;
+
+        _isActive = false;
+        _menu.SetActive(_isActive);
+
         _lookAction?.Enable();
 
         if (_cinemachineInput != null)
@@ -99,6 +81,11 @@ public class UpgradeMenu : MonoBehaviour
 
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+
+        if (UpgradeReminderMenu.Instance != null && _playerStats.AvailablePoints > 0)
+        {
+            UpgradeReminderMenu.Instance.Show();
+        }
     }
 
 
@@ -138,9 +125,9 @@ public class UpgradeMenu : MonoBehaviour
 
         if (_statsLabel != null)
         {
-            _statsLabel.text = $"Health: {_playerStats.Health}\n" +
-                               $"Strength: {_playerStats.Strength}\n" +
-                               $"Stamina: {_playerStats.Stamina}\n";
+            _statsLabel.text = $"Health: {_playerStats.Health}\n \n" +
+                               $"Strength: {_playerStats.Strength}\n \n" +
+                               $"Stamina: {_playerStats.Stamina}\n \n";
         }
     }
 

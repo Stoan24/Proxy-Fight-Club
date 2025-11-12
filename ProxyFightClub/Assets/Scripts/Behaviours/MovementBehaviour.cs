@@ -72,9 +72,9 @@ public class MovementBehaviour : MonoBehaviour
     }
     public void Dodge(Vector2 moveInput)
     {
-        if (_stamina != null && !_stamina.SpendStamina(_staminaCost)) return;
-
         if (_isDodging || _dodgeTimer > 0f) return;
+
+        if (_stamina != null && !_stamina.SpendStamina(_staminaCost)) return;
 
         _dodgeTimer = _dodgeCooldown;
         _isDodging = true;
